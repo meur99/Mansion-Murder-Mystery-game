@@ -1,1 +1,1 @@
-# Mansion-Murder-Mystery-game
+# Mansion Murder Mystery game

@@ -1,13 +1,31 @@
 class Item:
-    id: str
-    name: str
-    description: str
-    is_clue: bool
-    is_hidden: bool
+    def __init__(self, id: str, name: str, description: str, is_clue: bool, is_hidden: bool) -> None:
+        self.__id = id
+        self.__name = name
+        self.__description = description
+        self.__is_clue = is_clue
+        
+        self.is_hidden = is_hidden
 
+    @property
+    def id(self) -> str:
+        return self.__id
+    
+    @property
+    def name(self) -> str:
+        return self.__name
+    
+    @property
+    def description(self) -> str:
+        return self.__description
+    
+    @property
+    def is_clue(self) -> bool:
+        return self.__is_clue
+    
     def reveal(self) -> None:
-        self.is_hidden = not self.is_hidden
-        return
+        self.is_hidden = False
+
     
 class Room:
     id: str

@@ -1,0 +1,27 @@
+{
+  "entry_room_id": "foyer",
+  "rooms": [
+    {
+      "id": "foyer",
+      "name": "Grand Foyer",
+      "description": "A spacious entryway cold to the bone.",
+      "vibe": "Eerie and grand",
+      "items": [
+        {"id": "note", "name": "Scrawled Note", "description": "It reads: 'Don't go upstairs.'", "is_clue": true}
+      ]
+    },
+    {
+      "id": "study",
+      "name": "Locked Study",
+      "description": "A dark office space smelling of mahogany and ozone.",
+      "vibe": "Suffocating",
+      "is_locked": true,
+      "required_item_id": "brass_key",
+      "items": []
+    }
+  ],
+  "connections": {
+    "foyer": ["study"],
+    "study": ["foyer"]
+  }
+}

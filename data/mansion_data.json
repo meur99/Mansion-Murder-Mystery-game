@@ -4,24 +4,63 @@
     {
       "id": "foyer",
       "name": "Grand Foyer",
-      "description": "A spacious entryway cold to the bone.",
-      "vibe": "Eerie and grand",
+      "description": "A dust-choked entrance hall with a cracked glass chandelier hanging dangerously overhead.",
+      "vibe": "Hauntingly quiet and drafty",
+      "is_locked": false,
       "items": [
-        {"id": "note", "name": "Scrawled Note", "description": "It reads: 'Don't go upstairs.'", "is_clue": true}
+        {
+          "id": "note",
+          "name": "Scorned Note",
+          "description": "A crinkled message reading: 'Tonight, the master pays for his crimes...'",
+          "is_clue": true,
+          "is_hidden": false
+        }
+      ]
+    },
+    {
+      "id": "lounge",
+      "name": "The Crimson Lounge",
+      "description": "Velvet seats ring around a cold limestone hearth. The smell of high-end cigar smoke lingers.",
+      "vibe": "Tense and thick with secrets",
+      "is_locked": false,
+      "items": [
+        {
+          "id": "brass_key",
+          "name": "Ornate Brass Key",
+          "description": "A heavy key etched with the initials 'M.S.'",
+          "is_clue": false,
+          "is_hidden": false
+        }
       ]
     },
     {
       "id": "study",
-      "name": "Locked Study",
-      "description": "A dark office space smelling of mahogany and ozone.",
-      "vibe": "Suffocating",
+      "name": "The Master's Study",
+      "description": "A dark workspace filled with leatherbound ledgers and anomalous scientific journals.",
+      "vibe": "Smelling of old paper, oil lanterns, and sealing wax",
       "is_locked": true,
       "required_item_id": "brass_key",
-      "items": []
+      "items": [
+        {
+          "id": "ledger",
+          "name": "Altered Finance Ledger",
+          "description": "Records show millions diverted right before the tragedy.",
+          "is_clue": true,
+          "is_hidden": false
+        }
+      ]
     }
   ],
   "connections": {
-    "foyer": ["study"],
-    "study": ["foyer"]
+    "foyer": [
+      "lounge"
+    ],
+    "lounge": [
+      "foyer",
+      "study"
+    ],
+    "study": [
+      "lounge"
+    ]
   }
 }

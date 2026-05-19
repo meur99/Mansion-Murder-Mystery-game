@@ -4,63 +4,60 @@
     {
       "id": "foyer",
       "name": "Grand Foyer",
-      "description": "A dust-choked entrance hall with a cracked glass chandelier hanging dangerously overhead.",
+      "description": "A dark hall with a cracked crystal chandelier dangling dangerously overhead. Cold air rushes through from outside.",
       "vibe": "Hauntingly quiet and drafty",
       "is_locked": false,
       "items": [
-        {
-          "id": "note",
-          "name": "Scorned Note",
-          "description": "A crinkled message reading: 'Tonight, the master pays for his crimes...'",
-          "is_clue": true,
-          "is_hidden": false
-        }
+        {"id": "magnifying_glass", "name": "Vintage Magnifying Glass", "description": "An old brass glass tool scratched near the frame rim.", "is_clue": false, "is_hidden": false}
       ]
     },
     {
       "id": "lounge",
       "name": "The Crimson Lounge",
-      "description": "Velvet seats ring around a cold limestone hearth. The smell of high-end cigar smoke lingers.",
-      "vibe": "Tense and thick with secrets",
+      "description": "Velvet highback seats rim around a dying fireplace hearth. The faint smell of expensive cigars hangs in the air.",
+      "vibe": "Tense and thick with hidden secrets",
       "is_locked": false,
       "items": [
-        {
-          "id": "brass_key",
-          "name": "Ornate Brass Key",
-          "description": "A heavy key etched with the initials 'M.S.'",
-          "is_clue": false,
-          "is_hidden": false
-        }
+        {"id": "silver_knife", "name": "Silver Carving Knife", "description": "The mansion's finest carving utensil, looking freshly wiped down.", "is_clue": true, "is_hidden": false}
+      ]
+    },
+    {
+      "id": "kitchen",
+      "name": "Mansion Kitchen",
+      "description": "A gleaming, industrial-grade prep facility. Copper pots line the overhead ceiling racks neatly.",
+      "vibe": "Smelling faintly of rosemary and copper soap",
+      "is_locked": false,
+      "items": [
+        {"id": "brass_key", "name": "Ornate Brass Key", "description": "A heavy key stamped with the master's private initials 'R.S.'", "is_clue": false, "is_hidden": false}
       ]
     },
     {
       "id": "study",
       "name": "The Master's Study",
-      "description": "A dark workspace filled with leatherbound ledgers and anomalous scientific journals.",
-      "vibe": "Smelling of old paper, oil lanterns, and sealing wax",
+      "description": "Deep mahogany wood shelves stacked high with cryptic scientific ledgers and old historical maps.",
+      "vibe": "Smelling of old paper, leather volumes, and spent oil lanterns",
       "is_locked": true,
       "required_item_id": "brass_key",
       "items": [
-        {
-          "id": "ledger",
-          "name": "Altered Finance Ledger",
-          "description": "Records show millions diverted right before the tragedy.",
-          "is_clue": true,
-          "is_hidden": false
-        }
+        {"id": "will_document", "name": "Altered Last Will", "description": "A legal draft completely cutting off the immediate family from any estate payouts.", "is_clue": true, "is_hidden": false}
+      ]
+    },
+    {
+      "id": "conservatory",
+      "name": "The Glass Conservatory",
+      "description": "An expansive botanical dome crowded with exotic, overgrown flora beneath fogged glass panels.",
+      "vibe": "Stiflingly warm, humid, and heavy with greenhouse musk",
+      "is_locked": false,
+      "items": [
+        {"id": "poison_vial", "name": "Empty Aconite Vial", "description": "A small medical glass bottle hidden under a fern base, smelling of toxic wolfsbane.", "is_clue": true, "is_hidden": false}
       ]
     }
   ],
   "connections": {
-    "foyer": [
-      "lounge"
-    ],
-    "lounge": [
-      "foyer",
-      "study"
-    ],
-    "study": [
-      "lounge"
-    ]
+    "foyer": ["lounge", "kitchen"],
+    "lounge": ["foyer", "study"],
+    "kitchen": ["foyer", "conservatory"],
+    "study": ["lounge"],
+    "conservatory": ["kitchen"]
   }
 }

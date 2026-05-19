@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mansion Murder Mystery Case File Dashboard</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --cyan-accent: #38bdf8;
+            --emerald-text: #4ade80;
+            --slate-border: #334155;
+            --white-main: #f8fafc;
+            --muted-gray: #94a3b8;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--white-main);
+            margin: 0;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--slate-border);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: -0.5px;
+            color: var(--cyan-accent);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            grid-gap: 25px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .main-log-panel {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--slate-border);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 0;
+        }
+
+        .narrative-stream-box {
+            flex: 1;
+            background-color: #0b0f19;
+            border: 1px solid var(--slate-border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            font-family: "Courier New", monospace;
+            font-size: 14.5px;
+            line-height: 1.6;
+        }
+
+        .log-line {
+            margin-bottom: 12px;
+            border-left: 3px solid var(--cyan-accent);
+            padding-left: 12px;
+        }
+
+        .system-alert {
+            color: var(--emerald-text);
+            border-left-color: var(--emerald-text);
+        }
+
+        .action-control-deck {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        select, input[type="text"], button {
+            background-color: var(--bg-dark);
+            color: var(--white-main);
+            border: 1px solid var(--slate-border);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        select { flex: 1; cursor: pointer; }
+        input[type="text"] { flex: 1; }
+
+        button {
+            background-color: var(--cyan-accent);
+            color: #0f172a;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: #7dd3fc; }
+
+        .sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .widget-box {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--slate-border);
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .widget-box h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--cyan-accent);
+            border-bottom: 1px solid var(--slate-border);
+            padding-bottom: 6px;
+        }
+
+        .metadata-row {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .metadata-label { color: var(--muted-gray); font-weight: bold; }
+
+        .interactive-card-node {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--slate-border);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            font-size: 13.5px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .interactive-card-node:hover { border-color: var(--cyan-accent); }
+
+        .badge-tag {
+            background-color: #334155;
+            color: var(--cyan-accent);
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            float: right;
+            margin-top: -1px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>MANSION INVESTIGATION PANEL</h1>
+        <div id="location-coordinate-header" style="font-weight: bold; color: var(--emerald-text);">Loading Position State...</div>
+    </header>
+
+    <div class="dashboard-grid">
+        <div class="main-log-panel">
+            <div class="narrative-stream-box" id="terminal-stream">
+                <div class="log-line system-alert">System: Case file initial validation success. Select actions below or run custom interrogations.</div>
+            </div>
+
+            <div class="action-control-deck">
+                <div class="input-row">
+                    <select id="preset-action-type" onchange="syncArgumentDropdownOptions()">
+                        <option value="">-- Choose Shortcut Command Type --</option>
+                        <option value="go">Go to Room Location...</option>
+                        <option value="take">Pick Up Object Asset...</option>
+                        <option value="examine">Examine Object Closely...</option>
+                        <option value="talk">Quick Interrogate (Default Greeting)...</option>
+                    </select>
+                    <select id="preset-argument-target">
+                        <option value="">-- Choose Target Entity --</option>
+                    </select>
+                    <button onclick="dispatchPresetAction()">Execute Action</button>
+                </div>
+
+                <div class="input-row">
+                    <select id="interrogation-target-select">
+                        <option value="">-- Choose Interrogation Target --</option>
+                    </select>
+                    <input type="text" id="free-speech-text" placeholder="Type customized cross-examination inquiries directly here..." onkeypress="evaluateEnterKeyTrigger(event)">
+                    <button onclick="dispatchCustomInterrogationSpeech()">Interrogate Suspect</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-panel">
+            <div class="widget-box">
+                <h3>Location Profile</h3>
+                <div class="metadata-row"><span class="metadata-label">Node ID:</span> <span id="lbl-room-name">-</span></div>
+                <div class="metadata-row"><span class="metadata-label">Atmosphere:</span> <span id="lbl-room-vibe">-</span></div>
+                <div class="metadata-row" style="margin-top:8px;"><span class="metadata-label">Visual Field:</span></div>
+                <div id="lbl-room-desc" style="font-size:13px; color:var(--muted-gray); margin-top:4px; text-align: justify;">-</div>
+            </div>
+
+            <div class="widget-box">
+                <h3>Suspects on Location</h3>
+                <div id="ui-suspects-list-box">No profiles identified.</div>
+            </div>
+
+            <div class="widget-box">
+                <h3>Visible Assets</h3>
+                <div id="ui-items-list-box">No assets detected.</div>
+            </div>
+
+            <div class="widget-box">
+                <h3>Inventory & Collected Evidence Log</h3>
+                <div class="metadata-row"><span class="metadata-label">Pocket Items Asset Count:</span> <span id="lbl-inv-count" style="color:var(--cyan-accent); font-weight:bold;">0</span></div>
+                <div id="ui-inventory-stash-box" style="margin-top:6px; margin-bottom:12px;"></div>
+                <div class="metadata-row"><span class="metadata-label">Immutable Case Ledger:</span></div>
+                <div id="ui-evidence-ledger-box" style="font-size:12.5px; color:var(--emerald-text); margin-top:6px; line-height: 1.4;">No logs committed.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cachedState = {};
+
+        async function triggerNetworkCommandAPI(actionCode, targetArgument) {
+            if (!actionCode || !targetArgument) return;
+            try {
+                const response = await fetch('/api/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action_type: actionCode, argument: targetArgument })
+                });
+                const responseData = await response.json();
+                
+                pushLineToTerminalStream(responseData.log);
+                refreshUIWidgets(responseData.state);
+            } catch (err) {
+                console.error("Critical communications gateway error:", err);
+            }
+        }
+
+        function pushLineToTerminalStream(messageString) {
+            const outputBox = document.getElementById('terminal-stream');
+            const elementRow = document.createElement('div');
+            elementRow.className = 'log-line';
+            elementRow.innerText = messageString;
+            outputBox.appendChild(elementRow);
+            outputBox.scrollTop = outputBox.scrollHeight;
+        }
+
+        function refreshUIWidgets(statePackage) {
+            cachedState = statePackage;
+            
+            // Sync status tracking tags
+            document.getElementById('location-coordinate-header').innerText = `Location: ${statePackage.room_name}`;
+            document.getElementById('lbl-room-name').innerText = statePackage.room_name;
+            document.getElementById('lbl-room-vibe').innerText = statePackage.room_vibe;
+            document.getElementById('lbl-room-desc').innerText = statePackage.description;
+
+            // Map present character cards
+            const suspectBox = document.getElementById('ui-suspects-list-box');
+            const speakerSelect = document.getElementById('interrogation-target-select');
+            suspectBox.innerHTML = '';
+            
+            const selectedSpeakerValue = speakerSelect.value;
+            speakerSelect.innerHTML = '<option value="">-- Choose Interrogation Target --</option>';
+
+            if(statePackage.npcs.length > 0) {
+                statePackage.npcs.forEach(npc => {
+                    suspectBox.innerHTML += `<div class="interactive-card-node" onclick="autoFocusSuspectNode('${npc.id}')">👤 ${npc.name} <span class="badge-tag">${npc.role}</span></div>`;
+                    speakerSelect.innerHTML += `<option value="${npc.id}">${npc.name}</option>`;
+                });
+                if(selectedSpeakerValue) speakerSelect.value = selectedSpeakerValue;
+            } else {
+                suspectBox.innerHTML = '<div style="color:var(--muted-gray); font-size:13px;">No suspects currently in this area.</div>';
+            }
+
+            // Map visible object cards
+            const itemBox = document.getElementById('ui-items-list-box');
+            itemBox.innerHTML = '';
+            if(statePackage.items.length > 0) {
+                statePackage.items.forEach(item => {
+                    itemBox.innerHTML += `<div class="interactive-card-node" onclick="autoFocusItemNode('${item.id}')">📦 ${item.name} ${item.is_clue ? '⭐ Clue' : ''}</div>`;
+                });
+            } else {
+                itemBox.innerHTML = '<div style="color:var(--muted-gray); font-size:13px;">No loose objects found here.</div>';
+            }
+
+            // Sync user asset balances
+            document.getElementById('lbl-inv-count').innerText = statePackage.inventory.length;
+            const invStashBox = document.getElementById('ui-inventory-stash-box');
+            invStashBox.innerHTML = '';
+            statePackage.inventory.forEach(invId => {
+                invStashBox.innerHTML += `<div class="interactive-card-node" style="cursor:default; background-color:#131c2e;">🔑 ${invId}</div>`;
+            });
+
+            // Map case evidence lists
+            const ledgerBox = document.getElementById('ui-evidence-ledger-box');
+            ledgerBox.innerHTML = '';
+            if(statePackage.evidence_log.length > 0) {
+                statePackage.evidence_log.forEach(entry => {
+                    ledgerBox.innerHTML += `<div style="margin-bottom:6px; border-bottom:1px solid #2d3a4f; padding-bottom:4px;">🔍 ${entry}</div>`;
+                });
+            } else {
+                ledgerBox.innerHTML = '<div style="color:var(--muted-gray); font-size:12px;">No narrative clues registered yet.</div>';
+            }
+
+            syncArgumentDropdownOptions();
+        }
+
+        function syncArgumentDropdownOptions() {
+            const commandMode = document.getElementById('preset-action-type').value;
+            const dropSelect = document.getElementById('preset-argument-target');
+            dropSelect.innerHTML = '<option value="">-- Choose Target Entity --</option>';
+
+            if (!cachedState.room_id) return;
+
+            if (commandMode === 'go') {
+                cachedState.connections.forEach(node => {
+                    dropSelect.innerHTML += `<option value="${node.id}">${node.name}</option>`;
+                });
+            } else if (commandMode === 'take' || commandMode === 'examine') {
+                cachedState.items.forEach(obj => {
+                    dropSelect.innerHTML += `<option value="${obj.id}">${obj.name}</option>`;
+                });
+            } else if (commandMode === 'talk') {
+                cachedState.npcs.forEach(person => {
+                    dropSelect.innerHTML += `<option value="${person.id}">${person.name}</option>`;
+                });
+            }
+        }
+
+        function autoFocusSuspectNode(id) {
+            document.getElementById('preset-action-type').value = 'talk';
+            syncArgumentDropdownOptions();
+            document.getElementById('preset-argument-target').value = id;
+            document.getElementById('interrogation-target-select').value = id;
+        }
+
+        function autoFocusItemNode(id) {
+            document.getElementById('preset-action-type').value = 'examine';
+            syncArgumentDropdownOptions();
+            document.getElementById('preset-argument-target').value = id;
+        }
+
+        function dispatchPresetAction() {
+            const act = document.getElementById('preset-action-type').value;
+            const arg = document.getElementById('preset-argument-target').value;
+            triggerNetworkCommandAPI(act, arg);
+        }
+
+        function dispatchCustomInterrogationSpeech() {
+            const who = document.getElementById('interrogation-target-select').value;
+            const txt = document.getElementById('free-speech-text').value.trim();
+            if (!who || !txt) return;
+
+            pushLineToTerminalStream(`🕵️ You ask: "${txt}"`);
+            triggerNetworkCommandAPI("custom_talk", `${who}:${txt}`);
+            document.getElementById('free-speech-text').value = '';
+        }
+
+        function evaluateEnterKeyTrigger(event) {
+            if (event.key === 'Enter') dispatchCustomInterrogationSpeech();
+        }
+
+        // Initialize view loop parameters instantly on page ready triggers
+        window.onload = async () => {
+            try {
+                const response = await fetch('/api/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action_type: 'look', argument: '' })
+                });
+                const initialPayload = await response.json();
+                refreshUIWidgets(initialPayload.state);
+            } catch(e) {}
+        };
+    </script>
+</body>
+</html>

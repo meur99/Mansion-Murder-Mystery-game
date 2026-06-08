@@ -10,7 +10,7 @@ KEYS_DATA_PATH = os.path.join(DATA_DIR, "keys.json")
 # AI Model Configuration Setup
 API_KEY = os.getenv("API_KEY")
 
-if not API_KEY
+if not API_KEY:
     if os.path.exists(KEYS_DATA_PATH):
         with open(KEYS_DATA_PATH, 'r') as file:
             data = json.load(file)
